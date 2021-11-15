@@ -1,0 +1,1 @@
+powershell ./bot.py

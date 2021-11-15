@@ -1,0 +1,1 @@
+pip install discord youtube_dl requests
