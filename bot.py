@@ -287,6 +287,12 @@ async def traceQueue(ctx):
     await ctx.send(queue)
 
 @client.command()
+async def clear(ctx):
+    global queue
+    queue.clear
+    await ctx.send('Queue was empty')
+
+@client.command()
 async def h(ctx):
     await ctx.send(
         "Базовые комманды: \n!h - помощь \n!p [url] - воспроизводит музыку по указанной ссылке\n!yt [search arg] - производит поиск по ютубу и воспроизводит самый реливантный ответ" +
