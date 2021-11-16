@@ -260,6 +260,7 @@ async def next(ctx):
                 currentTrack += 1
             else:
                 await ctx.send("There are no more tracks in the queue")
+                await stopPlay(ctx)
         else:
             await ctx.send("Queue is empty")
             await stopPlay(ctx)
