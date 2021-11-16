@@ -257,8 +257,6 @@ async def next(ctx):
                 await stopPlay(ctx)
                 await p(ctx, queue[currentTrack - 1])
                 currentTrack += 1
-                await ctx.send(currentTrack)
-                await ctx.send(len(queue))
             else:
                 await ctx.send("There are no more tracks in the queue")
         else:
@@ -300,7 +298,9 @@ async def h(ctx):
         "\n\nПлейлисты: \n!cpl [name playlist] - создает плейлист с указынным именем\n!apl [name playlist] [url] - добавляет в указанный плейлист ссылку\n" +
         "!lpl [name playlist] - содержимое плейлиста\n!ppln [name playList] [number track] - воспроизводит конкретный трек по номеру из списка, номер можно узнать командой !lpl" +
         "\n!ppl [name playList] - воспроизводит указанный трек с начала\n!next - воспроизводит следующий по очереди трек в плейлисте, плейлист зациклен, поэтому при использовани комманды\n"+
-        "находясь на последнем треке плейлист будет восприозведен с начала\n!allpl - список существующих плейлистов"
+        "находясь на последнем треке плейлист будет восприозведен с начала\n!allpl - список существующих плейлистов" +
+        "\n\nОчереди:\nДля добавления в очередь используется команда !yt, когда есть проигрывющийся трек, то новый будет добавлен в очередь\n!next - следующий трек в очереди\n!clear - Очистить всю очередь" +
+        "\n!clearLast - удалить из очереди последний трек"
     )
 
 client.run(settings['token'])  
