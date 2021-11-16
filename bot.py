@@ -2,6 +2,7 @@ import discord
 import os
 import urllib.parse, urllib.request, re 
 import json
+import re
 
 from discord.ext.commands.core import guild_only
 from config import settings
@@ -60,7 +61,7 @@ def loadPlayList(namePlayList):
 async def checkAndStartPlay(ctx, list):
     if list != False:
         if len(list) > 0:
-            await p(ctx, list[int(currentTrack - 1)])
+            await play(ctx, list[int(currentTrack - 1)])
         else:
             await ctx.send('Playlist is empty')
     else:
@@ -98,29 +99,6 @@ async def disconnect(ctx):
         await ctx.send('Fail try...')
 
 @client.command()
-async def p(ctx, url):
-    channel = ctx.message.author.voice.channel
-    voice = get(client.voice_clients, guild=ctx.guild)
-
-    if voice and voice.is_connected():
-        await voice.move_to(channel)
-    else:
-        voice = await channel.connect()
-
-    voice = get(client.voice_clients, guild=ctx.guild)
-
-    if not voice.is_playing():
-        with YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)
-        URL = info['url']
-        voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-        voice.is_playing()
-        await ctx.send('Bot is playing ' + url)
-    else:
-        await ctx.send("Bot is already playing")
-        return
-
-@client.command()
 async def r(ctx):
     voice = get(client.voice_clients, guild=ctx.guild)
 
@@ -145,7 +123,7 @@ async def s(ctx):
         await ctx.send('Stopping...')
 
 @client.command()
-async def yt(ctx, *, search):
+async def p(ctx, *, search):
     global isPlayList
     isPlayList = False
     channel = ctx.message.author.voice.channel
@@ -208,7 +186,7 @@ async def spl(ctx, namePlayList):
     isPlayList = True
     writeJson('settings', namePlayList)
     list = readJson(namePlayList)
-    p(ctx, list[0])
+    play(ctx, list[0])
 
 @client.command()
 async def ppln(ctx, namePlayList, number):
@@ -237,6 +215,29 @@ async def ppl(ctx, namePlayList):
     await checkAndStartPlay(ctx, list)
 
 @client.command()
+async def play(ctx, url):
+    channel = ctx.message.author.voice.channel
+    voice = get(client.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
+
+    voice = get(client.voice_clients, guild=ctx.guild)
+
+    if not voice.is_playing():
+        with YoutubeDL(YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(url, download=False)
+        URL = info['url']
+        voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+        voice.is_playing()
+        await ctx.send('Bot is playing ' + url)
+    else:
+        await ctx.send("Bot is already playing")
+        return
+
+@client.command()
 async def next(ctx):
     global currentTrack
 
@@ -255,7 +256,7 @@ async def next(ctx):
         if len(queue) != 0:
             if len(queue) >= currentTrack:
                 await stopPlay(ctx)
-                await p(ctx, queue[currentTrack - 1])
+                await play(ctx, queue[currentTrack - 1])
                 currentTrack += 1
             else:
                 await ctx.send("There are no more tracks in the queue")
@@ -294,12 +295,12 @@ async def clearLast(ctx):
 @client.command()
 async def h(ctx):
     await ctx.send(
-        "Базовые комманды: \n!h - помощь \n!p [url] - воспроизводит музыку по указанной ссылке\n!yt [search arg] - производит поиск по ютубу и воспроизводит самый реливантный ответ" +
+        "Базовые комманды: \n!h - помощь\n!p [search arg or url] - производит поиск по ютубу и воспроизводит самый реливантный ответ либо воспроизводит ссылку" +
         "\n\nПлейлисты: \n!cpl [name playlist] - создает плейлист с указынным именем\n!apl [name playlist] [url] - добавляет в указанный плейлист ссылку\n" +
         "!lpl [name playlist] - содержимое плейлиста\n!ppln [name playList] [number track] - воспроизводит конкретный трек по номеру из списка, номер можно узнать командой !lpl" +
         "\n!ppl [name playList] - воспроизводит указанный трек с начала\n!next - воспроизводит следующий по очереди трек в плейлисте, плейлист зациклен, поэтому при использовани комманды\n"+
         "находясь на последнем треке плейлист будет восприозведен с начала\n!allpl - список существующих плейлистов" +
-        "\n\nОчереди:\nДля добавления в очередь используется команда !yt, когда есть проигрывющийся трек, то новый будет добавлен в очередь\n!next - следующий трек в очереди\n!clear - Очистить всю очередь" +
+        "\n\nОчереди:\nДля добавления в очередь используется команда !p, когда есть проигрывющийся трек, то новый будет добавлен в очередь\n!next - следующий трек в очереди\n!clear - Очистить всю очередь" +
         "\n!clearLast - удалить из очереди последний трек"
     )
 
