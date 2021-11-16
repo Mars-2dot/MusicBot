@@ -262,6 +262,7 @@ async def next(ctx):
                 await ctx.send("There are no more tracks in the queue")
         else:
             await ctx.send("Queue is empty")
+            await stopPlay(ctx)
 
 @client.command()
 async def allpl(ctx):
