@@ -1,1 +1,1 @@
-pip install discord youtube_dl requests
+pip install discord youtube_dl requests pynacl ytdl
