@@ -145,11 +145,6 @@ async def s(ctx):
         await ctx.send('Stopping...')
 
 @client.command()
-async def clear(ctx, amount=5):
-    await ctx.channel.purge(limit=amount)
-    await ctx.send("Messages have been cleared")
-    
-@client.command()
 async def yt(ctx, *, search):
     global isPlayList
     isPlayList = False
@@ -289,13 +284,13 @@ async def traceQueue(ctx):
 @client.command()
 async def clear(ctx):
     global queue
-    queue.clear
+    queue.clear()
     await ctx.send('Queue was empty')
 
 @client.command()
-async def clear(ctx):
+async def clearLast(ctx):
     global queue
-    queue.pop
+    queue.pop()
     await ctx.send('Last track was empty')
 
 @client.command()
