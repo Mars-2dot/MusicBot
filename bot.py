@@ -4,16 +4,16 @@ import os
 import urllib.parse, urllib.request, re 
 import json
 import re
-import textwrap
+from discord import voice_client
 
 from discord.ext.commands.core import guild_only
 from threading import Thread
-from threading import Timer
-from configTest import settings
+from config import settings
 from discord.ext import commands
 from discord.utils import get
 from discord import FFmpegPCMAudio
 from discord import TextChannel
+from discord import VoiceChannel
 from yt_dlp import YoutubeDL 
 
 client = commands.Bot(command_prefix='!') 
