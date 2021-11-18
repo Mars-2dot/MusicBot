@@ -1,11 +1,15 @@
+import threading
 import discord
 import os
 import urllib.parse, urllib.request, re 
 import json
 import re
+import textwrap
 
 from discord.ext.commands.core import guild_only
-from config import settings
+from threading import Thread
+from threading import Timer
+from configTest import settings
 from discord.ext import commands
 from discord.utils import get
 from discord import FFmpegPCMAudio
@@ -18,14 +22,18 @@ players = {}
 
 YDL_OPTIONS = { 'format': 'worstaudio/best', 'noplaylist': 'True', 'simulate': 'True', 'preferredquality': '192', 
                 'preferredcodec': 'mp3', 'key': 'FFmpegExtractAudio'}
+YDL_OPTIONS_PL = { 'format': 'worstaudio/best', 'yesplaylist': 'True', 'simulate': 'True', 'preferredquality': '192', 
+                'preferredcodec': 'mp3', 'key': 'FFmpegExtractAudio'}
 FFMPEG_OPTIONS = { 'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 SETTING_FILE = 'settings.json'
 PLAYLIST_PATH = 'playlists/'
 
 currentTrack = 1
 currentPlayList = ''
-queue = []
+queueList = []
 isPlayList = False
+isLoading = False
+countQueue = False 
 
 if not os.path.exists(PLAYLIST_PATH):
     os.mkdir(PLAYLIST_PATH)
@@ -57,6 +65,30 @@ def loadPlayList(namePlayList):
             return playList
     else:
         return False
+
+def playQueue(ctx, url):
+    global isLoading
+    isLoading = True
+
+    with YoutubeDL(YDL_OPTIONS_PL) as ydl:
+        info = ydl.extract_info(url, download=False)
+
+        for video in info["entries"]:
+
+            if not video:
+                print("ERROR: Unable to get info. Continuing...")
+                isLoading = False
+                continue
+
+            for prop in ["original_url"]:
+                global countQueue
+                if countQueue:
+                    global queueQueue
+                    queueList.append(str(video.get(prop)))
+                else:
+                    countQueue = True
+
+            isLoading = False
 
 async def checkAndStartPlay(ctx, list):
     if list != False:
@@ -136,15 +168,12 @@ async def p(ctx, *, search):
 
     query_string = urllib.parse.urlencode({'search_query': search})
     htm_content = urllib.request.urlopen(
-        'http://www.youtube.com/results?' + query_string)
+        'http://www.youtube.com/results?' + query_string)   
     search_results = re.findall(r'/watch\?v=(.{11})',
                                     htm_content.read().decode())
-    # await ctx.send('http://www.youtube.com/watch?v=' + search_results[0])   
     url = 'http://www.youtube.com/watch?v=' + search_results[0]
     print(url)
     
-    voice = get(client.voice_clients, guild=ctx.guild)
-
     if not voice.is_playing():
         with YoutubeDL(YDL_OPTIONS) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -153,9 +182,26 @@ async def p(ctx, *, search):
         voice.is_playing()
         await ctx.send('Bot is playing http://www.youtube.com/watch?v=' + search_results[0])
     else:
-        queue.append(url)
+        queueList.append(url)
         await ctx.send('Add to queue')
         return
+
+@client.command()
+async def pp(ctx, url):
+    global isPlayList
+    isPlayList = False
+    channel = ctx.message.author.voice.channel
+    voice = get(client.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
+    
+    await play(ctx, url)
+
+    thread = Thread(target=playQueue, args=(ctx, url)) 
+    thread.start()
 
 @client.command()
 async def cpl(ctx, namePlayList):
@@ -252,18 +298,22 @@ async def next(ctx):
 
         await ppln(ctx, currentPlayList, currentTrack)
     else:
-        global queue
-        if len(queue) != 0:
-            if len(queue) >= currentTrack:
-                await stopPlay(ctx)
-                await play(ctx, queue[currentTrack - 1])
-                currentTrack += 1
+        global queueList
+        global isLoading
+        if not isLoading:
+            if len(queueList) != 0:
+                if len(queueList) >= currentTrack:
+                    await stopPlay(ctx)
+                    await play(ctx, queueList[currentTrack - 1])
+                    currentTrack += 1
+                else:
+                    await ctx.send("There are no more tracks in the queue")
+                    await stopPlay(ctx)
             else:
-                await ctx.send("There are no more tracks in the queue")
+                await ctx.send("Queue is empty")
                 await stopPlay(ctx)
         else:
-            await ctx.send("Queue is empty")
-            await stopPlay(ctx)
+            await ctx.send('Queue is loading')
 
 @client.command()
 async def allpl(ctx):
@@ -279,19 +329,19 @@ async def allpl(ctx):
 
 @client.command()
 async def traceQueue(ctx):
-    global queue
-    await ctx.send(queue)
+    global queueList
+    await ctx.send(queueList)
 
 @client.command()
 async def clear(ctx):
-    global queue
-    queue.clear()
+    global queueList
+    queueList.clear()
     await ctx.send('Queue was empty')
 
 @client.command()
 async def clearLast(ctx):
-    global queue
-    queue.pop()
+    global queueList
+    queueList.pop()
     await ctx.send('Last track was empty')
 
 @client.command()
