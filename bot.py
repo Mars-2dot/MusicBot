@@ -1,11 +1,13 @@
 import threading
+import asyncio
 import discord
 import os
 import urllib.parse, urllib.request, re 
 import json
 import re
-from discord import voice_client
 
+from discord import voice_client
+from time import sleep
 from discord.ext.commands.core import guild_only
 from threading import Thread
 from config import settings
@@ -89,6 +91,13 @@ def playQueue(ctx, url):
                     countQueue = True
 
             isLoading = False
+    
+    # voice = get(client.voice_clients, guild=ctx.guild)
+
+    # while True:
+        # sleep(0.3)
+        # if not voice.is_playing():
+            # asyncio.get_event_loop().run_in_executor(next()) 
 
 async def checkAndStartPlay(ctx, list):
     if list != False:
@@ -183,7 +192,8 @@ async def p(ctx, *, search):
         await ctx.send('Bot is playing http://www.youtube.com/watch?v=' + search_results[0])
     else:
         queueList.append(url)
-        await ctx.send('Add to queue')
+
+        await ctx.send('Add to queue: http://www.youtube.com/watch?v=' + search_results[0])
         return
 
 @client.command()
