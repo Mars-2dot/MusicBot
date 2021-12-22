@@ -1,1 +1,1 @@
-powershell ./bot.py
+python ./bot.py
