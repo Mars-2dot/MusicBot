@@ -1,11 +1,3 @@
-import threading
-import asyncio
-import discord
-import os
-import urllib.parse, urllib.request, re 
-import json
-import re
-import random
 import discord
 from discord.ext import commands
 import random
@@ -15,19 +7,9 @@ import sys
 import traceback
 from async_timeout import timeout
 from functools import partial
-
-from datetime import date, datetime, timedelta
-from discord import voice_client
-from time import sleep, time
-from discord.ext.commands.core import guild_only
-from threading import Thread
-from configTest import settings
-from discord.ext import commands
-from discord.utils import get
-from discord import FFmpegPCMAudio
-from discord import TextChannel
-from discord import VoiceChannel
-from yt_dlp import YoutubeDL 
+import youtube_dl
+from youtube_dl import YoutubeDL
+from config import settings
 
 bot = commands.Bot(command_prefix='!') 
 
@@ -50,16 +32,20 @@ ytdlopts = {
 }
 
 ffmpegopts = {
-    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',#-nostdin
+    # 'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',#-nostdin
+    # 'options': '-vn'
+    "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 100",
     'options': '-vn'
 }
 
 ytdl = YoutubeDL(ytdlopts)
 
 class VoiceConnectionError(commands.CommandError):
+    print(commands.CommandError)
     """Custom Exception class for connection errors."""
 
 class InvalidVoiceChannel(VoiceConnectionError):
+     print(VoiceConnectionError)
      """Exception for cases of invalid Voice Channels."""
 
 class YTDLSource(discord.PCMVolumeTransformer):
@@ -119,7 +105,7 @@ class MusicPlayer:
         self.next = asyncio.Event()
 
         self.np = None 
-        self.volume = .5
+        self.volume =  .5
         self.current = None
 
         ctx.bot.loop.create_task(self.player_loop())
@@ -131,7 +117,7 @@ class MusicPlayer:
             self.next.clear()
 
             try:
-                async with timeout(300):  # 5 min
+                async with timeout(5):  # 5 min
                     source = await self.queue.get()
             except asyncio.TimeoutError:
                 return self.destroy(self._guild)
@@ -203,7 +189,7 @@ class Music(commands.Cog):
 
         return player
 
-    @commands.command(name='join', aliases=['connect', 'j'], description="aliases='connect', 'j'; connects to voice")
+    @commands.command(name='join', aliases=['connect', 'j'], description="connects to voice")
     async def connect_(self, ctx, *, channel: discord.VoiceChannel=None):
         if not channel:
             try:
@@ -231,7 +217,7 @@ class Music(commands.Cog):
             await ctx.message.add_reaction('👍')
         await ctx.send(f'**Joined `{channel}`**')
 
-    @commands.command(name='play', aliases=['sing','p'], description="aliases='sing','p'; streams music")
+    @commands.command(name='play', aliases=['sing','p'], description="streams music")
     async def play_(self, ctx, *, search: str):
         await ctx.trigger_typing()
 
@@ -272,7 +258,7 @@ class Music(commands.Cog):
         vc.resume()
         await ctx.send("Resuming ⏯️")
 
-    @commands.command(name='skip', aliases=['n'], description="aliases='n'; skips to next song in queue")
+    @commands.command(name='skip', aliases=['n'], description="skips to next song in queue")
     async def skip_(self, ctx):
         vc = ctx.voice_client
 
@@ -287,7 +273,7 @@ class Music(commands.Cog):
 
         vc.stop()
     
-    @commands.command(name='remove', aliases=['rm', 'rem'], description="aliases='rm', 'rem'; removes specified song from queue")
+    @commands.command(name='remove', aliases=['rm', 'rem'], description="removes specified song from queue")
     async def remove_(self, ctx, pos : int=None):
 
         vc = ctx.voice_client
@@ -309,7 +295,7 @@ class Music(commands.Cog):
                 embed = discord.Embed(title="", description=f'Could not find a track for "{pos}"', color=discord.Color.green())
                 await ctx.send(embed=embed)
     
-    @commands.command(name='clear', aliases=['clr', 'cl', 'cr'], description="aliases='clr', 'cl', 'cr'; clears entire queue")
+    @commands.command(name='clear', aliases=['clr', 'cl', 'cr'], description="clears entire queue")
     async def clear_(self, ctx):
 
         vc = ctx.voice_client
@@ -322,7 +308,7 @@ class Music(commands.Cog):
         player.queue._queue.clear()
         await ctx.send('💣 **Cleared**')
 
-    @commands.command(name='queue', aliases=['q', 'playlist', 'que'], description="aliases='q', 'playlist', 'que'; shows the queue")
+    @commands.command(name='queue', aliases=['q', 'playlist', 'que'], description="shows the queue")
     async def queue_info(self, ctx):
         vc = ctx.voice_client
 
@@ -353,7 +339,7 @@ class Music(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(name='np', aliases=['song', 'current', 'currentsong', 'playing'], description="aliases='song', 'current', 'currentsong', 'playing'; shows the current playing song")
+    @commands.command(name='np', aliases=['song', 'current', 'currentsong', 'playing'], description="shows the current playing song")
     async def now_playing_(self, ctx):
         vc = ctx.voice_client
 
@@ -380,7 +366,7 @@ class Music(commands.Cog):
         embed.set_author(icon_url=self.bot.user.avatar_url, name=f"Now Playing 🎶")
         await ctx.send(embed=embed)
 
-    @commands.command(name='volume', aliases=['vol', 'v'], description="aliases='vol', 'v'; changes Kermit's volume")
+    @commands.command(name='volume', aliases=['vol', 'v'], description="changes Kermit's volume")
     async def change_volume(self, ctx, *, vol: float=None):
         vc = ctx.voice_client
 
@@ -405,7 +391,7 @@ class Music(commands.Cog):
         embed = discord.Embed(title="", description=f'**`{ctx.author}`** set the volume to **{vol}%**', color=discord.Color.green())
         await ctx.send(embed=embed)
 
-    @commands.command(name='leave', aliases=["stop", "dc", "disconnect", "bye"], description="aliases=['stop', 'dc', 'disconnect', 'bye'; stops music and disconnects from voice")
+    @commands.command(name='leave', aliases=["stop", "dc", "disconnect", "bye"], description="stops music and disconnects from voice")
     async def leave_(self, ctx):
         vc = ctx.voice_client
 
