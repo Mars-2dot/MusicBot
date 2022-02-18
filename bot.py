@@ -1,3 +1,4 @@
+from optparse import Option
 import discord
 from discord.ext import commands
 import random
@@ -9,31 +10,23 @@ from async_timeout import timeout
 from functools import partial
 import youtube_dl
 from youtube_dl import YoutubeDL
-from config import settings
+from configTest import settings
 
 bot = commands.Bot(command_prefix='!') 
 
 ytdlopts = {
     'format': 'worstaudio/best',
-    # 'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
     'restrictfilenames': True,
     'simulate': 'True', 
     'preferredquality': '192', 
     'preferredcodec': 'mp3', 
     'key': 'FFmpegExtractAudio',
     'noplaylist': True,
-    # 'nocheckcertificate': True,
-    # 'ignoreerrors': False,
     'logtostderr': False,
-    # 'quiet': True,
-    # 'no_warnings': True,
     'default_search': 'auto',
-    # 'source_address': '0.0.0.0'  
 }
 
 ffmpegopts = {
-    # 'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',#-nostdin
-    # 'options': '-vn'
     "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 100",
     'options': '-vn'
 }
@@ -41,11 +34,9 @@ ffmpegopts = {
 ytdl = YoutubeDL(ytdlopts)
 
 class VoiceConnectionError(commands.CommandError):
-    print(commands.CommandError)
     """Custom Exception class for connection errors."""
 
 class InvalidVoiceChannel(VoiceConnectionError):
-     print(VoiceConnectionError)
      """Exception for cases of invalid Voice Channels."""
 
 class YTDLSource(discord.PCMVolumeTransformer):
@@ -80,7 +71,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         else:
             return {'webpage_url': data['webpage_url'], 'requester': ctx.author, 'title': data['title']}
 
-        return cls(discord.FFmpegPCMAudio(source), data=data, requester=ctx.author)
+        return cls(discord.FFmpegPCMAudio(source, options='-vn', before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 100'), data=data, requester=ctx.author)
 
     @classmethod
     async def regather_stream(cls, data, *, loop):
@@ -90,7 +81,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         to_run = partial(ytdl.extract_info, url=data['webpage_url'], download=False)
         data = await loop.run_in_executor(None, to_run)
 
-        return cls(discord.FFmpegPCMAudio(data['url']), data=data, requester=requester)
+        return cls(discord.FFmpegPCMAudio(data['url'], options='-vn', before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 100'), data=data, requester=requester)
 
 class MusicPlayer:
     __slots__ = ('bot', '_guild', '_channel', '_cog', 'queue', 'next', 'current', 'np', 'volume')
