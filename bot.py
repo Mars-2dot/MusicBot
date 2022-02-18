@@ -21,7 +21,7 @@ from discord import voice_client
 from time import sleep, time
 from discord.ext.commands.core import guild_only
 from threading import Thread
-from configTest import settings
+from config import settings
 from discord.ext import commands
 from discord.utils import get
 from discord import FFmpegPCMAudio
