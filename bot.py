@@ -31,13 +31,17 @@ ffmpegopts = {
     'options': '-vn'
 }
 
+
 ytdl = YoutubeDL(ytdlopts)
+
 
 class VoiceConnectionError(commands.CommandError):
     """Custom Exception class for connection errors."""
 
+
 class InvalidVoiceChannel(VoiceConnectionError):
-     """Exception for cases of invalid Voice Channels."""
+    """Exception for cases of invalid Voice Channels."""
+
 
 class YTDLSource(discord.PCMVolumeTransformer):
 
@@ -49,8 +53,10 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.web_url = data.get('webpage_url')
         self.duration = data.get('duration')
 
-
     def __getitem__(self, item: str):
+        """Allows us to access attributes similar to a dict.
+        This is only useful when you are NOT downloading.
+        """
         return self.__getattribute__(item)
 
     @classmethod
@@ -95,20 +101,21 @@ class MusicPlayer:
         self.queue = asyncio.Queue()
         self.next = asyncio.Event()
 
-        self.np = None 
-        self.volume =  .5
+        self.np = None  
+        self.volume = .5
         self.current = None
 
         ctx.bot.loop.create_task(self.player_loop())
 
     async def player_loop(self):
+        """Our main player loop."""
         await self.bot.wait_until_ready()
 
         while not self.bot.is_closed():
             self.next.clear()
 
             try:
-                async with timeout(5):  # 5 min
+                async with timeout(300):  # 5 min
                     source = await self.queue.get()
             except asyncio.TimeoutError:
                 return self.destroy(self._guild)
@@ -135,7 +142,9 @@ class MusicPlayer:
     def destroy(self, guild):
         return self.bot.loop.create_task(self._cog.cleanup(guild))
 
+
 class Music(commands.Cog):
+
     __slots__ = ('bot', 'players')
 
     def __init__(self, bot):
@@ -249,7 +258,7 @@ class Music(commands.Cog):
         vc.resume()
         await ctx.send("Resuming ⏯️")
 
-    @commands.command(name='skip', aliases=['n'], description="skips to next song in queue")
+    @commands.command(name='skip', description="skips to next song in queue")
     async def skip_(self, ctx):
         vc = ctx.voice_client
 
@@ -395,6 +404,7 @@ class Music(commands.Cog):
         await ctx.send('**Successfully disconnected**')
 
         await self.cleanup(ctx.guild)
+
 
 def setup(bot):
     bot.add_cog(Music(bot))
