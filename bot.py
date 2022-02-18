@@ -21,7 +21,7 @@ from discord import voice_client
 from time import sleep, time
 from discord.ext.commands.core import guild_only
 from threading import Thread
-from config import settings
+from configTest import settings
 from discord.ext import commands
 from discord.utils import get
 from discord import FFmpegPCMAudio
@@ -33,16 +33,20 @@ bot = commands.Bot(command_prefix='!')
 
 ytdlopts = {
     'format': 'worstaudio/best',
-    'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    # 'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
     'restrictfilenames': True,
+    'simulate': 'True', 
+    'preferredquality': '192', 
+    'preferredcodec': 'mp3', 
+    'key': 'FFmpegExtractAudio',
     'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
+    # 'nocheckcertificate': True,
+    # 'ignoreerrors': False,
     'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
+    # 'quiet': True,
+    # 'no_warnings': True,
     'default_search': 'auto',
-    'source_address': '0.0.0.0'  
+    # 'source_address': '0.0.0.0'  
 }
 
 ffmpegopts = {
@@ -160,7 +164,6 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.players = {}
-        # self.bot.run(settings['token'])  
 
     async def cleanup(self, guild):
         try:
