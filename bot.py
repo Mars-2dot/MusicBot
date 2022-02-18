@@ -10,7 +10,7 @@ from async_timeout import timeout
 from functools import partial
 import youtube_dl
 from youtube_dl import YoutubeDL
-from configTest import settings
+from config import settings
 
 bot = commands.Bot(command_prefix='!') 
 
@@ -108,7 +108,6 @@ class MusicPlayer:
         ctx.bot.loop.create_task(self.player_loop())
 
     async def player_loop(self):
-        """Our main player loop."""
         await self.bot.wait_until_ready()
 
         while not self.bot.is_closed():
