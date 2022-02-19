@@ -1,3 +1,4 @@
+from ast import alias
 from optparse import Option
 import discord
 from discord.ext import commands
@@ -10,7 +11,7 @@ from async_timeout import timeout
 from functools import partial
 import youtube_dl
 from youtube_dl import YoutubeDL
-from config import settings
+from configTest import settings
 
 bot = commands.Bot(command_prefix='!') 
 
@@ -31,9 +32,7 @@ ffmpegopts = {
     'options': '-vn'
 }
 
-
 ytdl = YoutubeDL(ytdlopts)
-
 
 class VoiceConnectionError(commands.CommandError):
     """Custom Exception class for connection errors."""
@@ -229,6 +228,8 @@ class Music(commands.Cog):
 
         source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, download=False)
 
+        print(source)
+
         await player.queue.put(source)
 
     @commands.command(name='pause', description="pauses music")
@@ -257,7 +258,7 @@ class Music(commands.Cog):
         vc.resume()
         await ctx.send("Resuming ⏯️")
 
-    @commands.command(name='skip', description="skips to next song in queue")
+    @commands.command(name='skip', aliases=['n', 'next'], description="skips to next song in queue")
     async def skip_(self, ctx):
         vc = ctx.voice_client
 
