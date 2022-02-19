@@ -25,6 +25,7 @@ ytdlopts = {
     'noplaylist': True,
     'logtostderr': False,
     'default_search': 'auto',
+    'playlist-start': 1
 }
 
 ffmpegopts = {
@@ -64,6 +65,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
         to_run = partial(ytdl.extract_info, url=search, download=download)
         data = await loop.run_in_executor(None, to_run)
+
+        print(data)
 
         if 'entries' in data:
             data = data['entries'][0]
@@ -142,7 +145,6 @@ class MusicPlayer:
 
 
 class Music(commands.Cog):
-
     __slots__ = ('bot', 'players')
 
     def __init__(self, bot):
@@ -227,8 +229,6 @@ class Music(commands.Cog):
         player = self.get_player(ctx)
 
         source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, download=False)
-
-        print(source)
 
         await player.queue.put(source)
 
