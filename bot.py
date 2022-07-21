@@ -11,46 +11,17 @@ import sys
 import traceback
 from async_timeout import timeout
 from functools import partial
-import youtube_dl
-from youtube_dl import YoutubeDL
-from config import settings
+import yt_dlp
+from yt_dlp import YoutubeDL
+from config import ytdlopts
+from config import ytdloptsPL
+import config
+from configTest import settings
 
 bot = commands.Bot(command_prefix='!') 
 
-ytdlopts = {
-    'format': 'worstaudio/best',
-    'restrictfilenames': True,
-    'simulate': 'True', 
-    'preferredquality': '192', 
-    'preferredcodec': 'mp3', 
-    'key': 'FFmpegExtractAudio',
-    'noplaylist': True,
-    'logtostderr': False,
-    'default_search': 'auto',
-    # 'playlist-start': 1
-    # "extract_flat": True
-}
 
-ytdloptsPL = {
-    'format': 'worstaudio/best',
-    'restrictfilenames': True,
-    'simulate': 'True', 
-    'preferredquality': '192', 
-    'preferredcodec': 'mp3', 
-    'key': 'FFmpegExtractAudio',
-    'noplaylist': True,
-    'logtostderr': False,
-    'default_search': 'auto',
-    # 'playlist-start': 1
-    "extract_flat": True
-}
-
-ffmpegopts = {
-    "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 100",
-    'options': '-vn'
-}
-
-ytdl = YoutubeDL(ytdlopts)
+ytdl = yt_dlp.YoutubeDL(ytdlopts)
 
 class VoiceConnectionError(commands.CommandError):
     """Custom Exception class for connection errors."""
