@@ -15,7 +15,7 @@ import yt_dlp
 from yt_dlp import YoutubeDL
 from config import ytdlopts
 from config import ytdloptsPL
-import config
+
 from configTest import settings
 
 bot = commands.Bot(command_prefix='!') 
