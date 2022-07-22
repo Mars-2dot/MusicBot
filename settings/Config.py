@@ -1,12 +1,10 @@
 settings = {
-    'token': '',
     'bot': 'GreenTeaBot',
     'id': 904764676016070656,
     'prefix': '!'
 }
 
 settingsTest = {
-    'token': '',
     'bot': 'GreenTeaBot',
     'id': 903939441842876488,
     'prefix': '!'

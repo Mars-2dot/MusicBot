@@ -3,6 +3,7 @@ import random
 import asyncio
 import itertools
 import sys
+import os
 import traceback
 import yt_dlp
 import exception.errors.VoiceConnectionError
@@ -504,5 +505,4 @@ def setup(bot):
 
 
 setup(bot)
-
-bot.run(settingsTest['token'])
+bot.run(os.environ["MusicBotToken"])
