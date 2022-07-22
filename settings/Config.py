@@ -1,12 +1,12 @@
 settings = {
-    'token': 'OTA0NzY0Njc2MDE2MDcwNjU2.YYARxA.4PpNo0ZW3RRZFyXOu20k_jcEIc8',
+    'token': '',
     'bot': 'GreenTeaBot',
     'id': 904764676016070656,
     'prefix': '!'
 }
 
 settingsTest = {
-    'token': 'OTAzOTM5NDQxODQyODc2NDg4.GofE8l.4ZR5-NuB5fKIK72kmDrZHs40cbQL_Dsob_ZFdY',
+    'token': '',
     'bot': 'GreenTeaBot',
     'id': 903939441842876488,
     'prefix': '!'
