@@ -3,7 +3,6 @@ import random
 import asyncio
 import itertools
 import sys
-import os
 import traceback
 import yt_dlp
 import exception.errors.VoiceConnectionError
@@ -14,10 +13,8 @@ from discord.ext import commands
 from async_timeout import timeout
 from functools import partial
 from yt_dlp import YoutubeDL
-from settings.Config import ytdlopts
-from settings.Config import settingsTest
 
-bot = commands.Bot(command_prefix='!')
+from settings.Config import ytdlopts, bot
 
 ytdl = yt_dlp.YoutubeDL(ytdlopts)
 
@@ -500,9 +497,5 @@ class Music(commands.Cog):
         await self.cleanup(ctx.guild)
 
 
-def setup(bot):
-    bot.add_cog(Music(bot))
 
 
-setup(bot)
-bot.run(os.environ["MusicBotToken"])

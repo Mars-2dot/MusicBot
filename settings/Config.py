@@ -1,3 +1,7 @@
+from discord.ext import commands
+
+bot = commands.Bot(command_prefix='!')
+
 settings = {
     'bot': 'GreenTeaBot',
     'id': 904764676016070656,
