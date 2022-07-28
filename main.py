@@ -1,6 +1,5 @@
 import os
 
-from discord.ext import commands
 from cogs.Bot import Music
 from settings.Config import bot
 
