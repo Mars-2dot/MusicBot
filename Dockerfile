@@ -5,7 +5,8 @@ MAINTAINER Mars-2dot
 LABEL version="0.9.0"
 
 RUN apt-get update && \
-  apt-get install -y python3 python3-pip
+  apt-get install -y python3 python3-pip && \
+    apt-get install -y ffmpeg
 
 RUN pip install discord youtube_dl requests pynacl ytdl yt_dlp
 
