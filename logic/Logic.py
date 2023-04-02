@@ -1,6 +1,19 @@
 import discord
+import os
+from environs import Env
 from discord import voice_client
 
+
+def parse_ctl(*args):
+    env = Env()
+    env.read_env()
+    for arg in args[0]:
+        if arg == "prod":
+            return env("MusicBotToken")
+        elif arg == "test":
+            return env("MusicBotTokenTest")
+
+    raise Exception("Token not found, enter \"prod\" or \"test\"")
 
 class Logic:
     """Implementation of business logic not related to the main coge"""
