@@ -1,6 +1,10 @@
+import discord
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix='!')
+intents = discord.Intents.all()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 settings = {
     'bot': 'GreenTeaBot',

@@ -222,17 +222,16 @@ class Music(commands.Cog):
 
         return player
 
-    @commands.command(name='join', aliases=['connect', 'j'], description="connects to voice")
+    @bot.command(name='join', aliases=['connect', 'j'], description="connects to voice")
     async def connect_(self, ctx, *, channel: discord.VoiceChannel = None):
-        if not channel:
-            try:
-                channel = ctx.author.voice.channel
-            except AttributeError:
-                embed = discord.Embed(title="",
+        try:
+            channel = ctx.author.voice.channel
+        except AttributeError:
+            embed = discord.Embed(title="",
                                       description="No channel to join. Please call `,join` from a voice channel.",
                                       color=discord.Color.green())
-                await ctx.send(embed=embed)
-                raise exception.errors.InvalidVoiceChannel('No channel to join. Please either specify a valid channel or join one.')
+            await ctx.send(embed=embed)
+            raise exception.errors.InvalidVoiceChannel('No channel to join. Please either specify a valid channel or join one.')
 
         vc = ctx.voice_client
 
@@ -252,9 +251,9 @@ class Music(commands.Cog):
             await ctx.message.add_reaction('👍')
         await ctx.send(f'**Joined `{channel}`**')
 
-    @commands.command(name='play', aliases=['sing', 'p'], description="streams music")
+    @bot.command(name='play', aliases=['sing', 'p'], description="streams music")
     async def play_(self, ctx, *, search: str):
-        await ctx.trigger_typing()
+        # await ctx.trigger_typing()
 
         vc = ctx.voice_client
 
@@ -275,7 +274,7 @@ class Music(commands.Cog):
             for source in sources:
                 await player.queue.put(source)
 
-    @commands.command(name="playList", aliases=['pl', 'playl'], description="streams music from playlist")
+    @bot.command(name="playList", aliases=['pl', 'playl'], description="streams music from playlist")
     async def playlist_(self, ctx, *, search: str):
         await ctx.trigger_typing()
 
@@ -299,7 +298,7 @@ class Music(commands.Cog):
 
         await Music.now_playing_(ctx)
 
-    @commands.command(name='pause', description="pauses music")
+    @bot.command(name='pause', description="pauses music")
     async def pause_(self, ctx):
         vc = ctx.voice_client
 
@@ -313,7 +312,7 @@ class Music(commands.Cog):
         vc.pause()
         await ctx.send("Paused ⏸️")
 
-    @commands.command(name='resume', description="resumes music")
+    @bot.command(name='resume', description="resumes music")
     async def resume_(self, ctx):
         vc = ctx.voice_client
 
@@ -327,7 +326,7 @@ class Music(commands.Cog):
         vc.resume()
         await ctx.send("Resuming ⏯️")
 
-    @commands.command(name='skip', aliases=['n', 'next'], description="skips to next song in queue")
+    @bot.command(name='skip', aliases=['n', 'next'], description="skips to next song in queue")
     async def skip_(self, ctx):
         vc = ctx.voice_client
 
@@ -343,7 +342,7 @@ class Music(commands.Cog):
 
         vc.stop()
 
-    @commands.command(name='remove', aliases=['rm', 'rem'], description="removes specified song from queue")
+    @bot.command(name='remove', aliases=['rm', 'rem'], description="removes specified song from queue")
     async def remove_(self, ctx, pos: int = None):
 
         vc = ctx.voice_client
@@ -369,7 +368,7 @@ class Music(commands.Cog):
                                       color=discord.Color.green())
                 await ctx.send(embed=embed)
 
-    @commands.command(name='clear', aliases=['clr', 'cl', 'cr'], description="clears entire queue")
+    @bot.command(name='clear', aliases=['clr', 'cl', 'cr'], description="clears entire queue")
     async def clear_(self, ctx):
 
         vc = ctx.voice_client
@@ -383,7 +382,7 @@ class Music(commands.Cog):
         player.queue._queue.clear()
         await ctx.send('💣 **Cleared**')
 
-    @commands.command(name='queue', aliases=['q', 'playlist', 'que'], description="shows the queue")
+    @bot.command(name='queue', aliases=['q', 'playlist', 'que'], description="shows the queue")
     async def queue_info(self, ctx):
         vc = ctx.voice_client
 
@@ -418,7 +417,7 @@ class Music(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(name='np', aliases=['song', 'current', 'currentsong', 'playing'],
+    @bot.command(name='np', aliases=['song', 'current', 'currentsong', 'playing'],
                       description="shows the current playing song")
     async def now_playing_(self, ctx):
         vc = ctx.voice_client
@@ -451,7 +450,7 @@ class Music(commands.Cog):
         embed.set_author(icon_url=self.bot.user.avatar_url, name=f"Now Playing 🎶")
         await ctx.send(embed=embed)
 
-    @commands.command(name='volume', aliases=['vol', 'v'], description="changes Kermit's volume")
+    @bot.command(name='volume', aliases=['vol', 'v'], description="changes Kermit's volume")
     async def change_volume(self, ctx, *, vol: float = None):
         vc = ctx.voice_client
 
@@ -480,7 +479,7 @@ class Music(commands.Cog):
                               color=discord.Color.green())
         await ctx.send(embed=embed)
 
-    @commands.command(name='leave', aliases=["stop", "dc", "disconnect", "bye"],
+    @bot.command(name='leave', aliases=["stop", "dc", "disconnect", "bye"],
                       description="stops music and disconnects from voice")
     async def leave_(self, ctx):
         vc = ctx.voice_client
@@ -495,7 +494,3 @@ class Music(commands.Cog):
         await ctx.send('**Successfully disconnected**')
 
         await self.cleanup(ctx.guild)
-
-
-
-
