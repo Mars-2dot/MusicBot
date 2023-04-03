@@ -8,8 +8,8 @@ RUN apt-get update && \
   apt-get install -y python3 python3-pip && \
     apt-get install -y ffmpeg
 
-RUN pip install discord youtube_dl requests pynacl ytdl yt_dlp
-
+RUN python3 -m pip install -U discord.py
+RUN python3 -m pip install -U yt-dlp pynacl
 COPY ./cogs/* /home/bot/cogs/
 COPY ./exception/* /home/bot/exception/
 COPY ./exception/errors/* /home/bot/exception/errors/

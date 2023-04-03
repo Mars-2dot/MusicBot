@@ -14,4 +14,4 @@ if __name__ == '__main__':
     bot = commands.Bot(command_prefix="!", intents=intents)
 
     asyncio.run(setup(bot))
-    bot.run("OTAzOTM5NDQxODQyODc2NDg4.GJVneV.Hj8zgevgMP1rdVE2fhnxCVpKfxO3-_EyhK3F8Y")
+    bot.run("")
