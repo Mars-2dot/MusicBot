@@ -228,10 +228,11 @@ class Music(commands.Cog):
             channel = ctx.author.voice.channel
         except AttributeError:
             embed = discord.Embed(title="",
-                                      description="No channel to join. Please call `,join` from a voice channel.",
-                                      color=discord.Color.green())
+                                  description="No channel to join. Please call `,join` from a voice channel.",
+                                  color=discord.Color.green())
             await ctx.send(embed=embed)
-            raise exception.errors.InvalidVoiceChannel('No channel to join. Please either specify a valid channel or join one.')
+            raise exception.errors.InvalidVoiceChannel(
+                'No channel to join. Please either specify a valid channel or join one.')
 
         vc = ctx.voice_client
 
@@ -418,7 +419,7 @@ class Music(commands.Cog):
         await ctx.send(embed=embed)
 
     @bot.command(name='np', aliases=['song', 'current', 'currentsong', 'playing'],
-                      description="shows the current playing song")
+                 description="shows the current playing song")
     async def now_playing_(self, ctx):
         vc = ctx.voice_client
 
@@ -480,7 +481,7 @@ class Music(commands.Cog):
         await ctx.send(embed=embed)
 
     @bot.command(name='leave', aliases=["stop", "dc", "disconnect", "bye"],
-                      description="stops music and disconnects from voice")
+                 description="stops music and disconnects from voice")
     async def leave_(self, ctx):
         vc = ctx.voice_client
 

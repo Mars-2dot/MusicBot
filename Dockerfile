@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y ffmpeg
 
 RUN python3 -m pip install -U discord.py
-RUN python3 -m pip install -U yt-dlp pynacl
+RUN python3 -m pip install -U yt-dlp pynacl environs
 COPY ./cogs/* /home/bot/cogs/
 COPY ./exception/* /home/bot/exception/
 COPY ./exception/errors/* /home/bot/exception/errors/
@@ -17,11 +17,6 @@ COPY ./logic/* /home/bot/logic/
 COPY ./settings/* /home/bot/settings/
 COPY ./main.py /home/bot/
 
-# Enter token for test
-ENV MusicBotTokenTest=""
-# Enter token main
-ENV MusicBotToken=""
-
 WORKDIR /home/bot
 
-ENTRYPOINT ["/usr/bin/python3", "main.py"]
+ENTRYPOINT ["/usr/bin/python3", "main.py", "prod"]
