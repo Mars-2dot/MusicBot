@@ -32,7 +32,7 @@ ytdlopts = {
     # "extract_flat": True
     'username': 'botgeshka@mail.ru',
     'password': 'onyxlotus2664',
-    'cookiefile': 'settings/youtube.com_cookies.txt'
+    'cookiefile': 'settings/cookies.txt'
 }
 
 ffmpegopts = {
