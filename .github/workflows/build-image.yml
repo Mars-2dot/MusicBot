@@ -31,13 +31,21 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Setup kubectl
-      uses: azure/setup-kubectl@v3
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v1
       with:
-        kubeconfig: ${{ secrets.KUBE_CONFIG }}
+        installKubectl: true
+        kubectlVersion: 'latest' 
 
-    - name: Deploy to Kubernetes
+    - name: Configure kubectl
       run: |
-        helm upgrade --install music_bot ./deploy
-        kubectl rollout restart deployment music_bot
+        kubectl config set-cluster ${{ secrets.CLUSTER_NAME }} \
+          --server=${{ secrets.KUBERNETES_SERVER_URL }} \
+          --insecure-skip-tls-verify=true 
+        kubectl config set-context default --cluster=${{ secrets.CLUSTER_NAME }}
+        kubectl config use-context default
+
+    - name: Deploy using Helm
+      run: helm upgrade --install music_bot ./deploy
+
 
