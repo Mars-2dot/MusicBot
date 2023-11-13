@@ -60,5 +60,6 @@ jobs:
           cat kube-config.yaml 
           kubectl config view
           kubectl cluster-info
+          kubectl get nodes
           helm upgrade --install music-bot ./deploy
       
