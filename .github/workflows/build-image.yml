@@ -46,6 +46,6 @@ jobs:
         kubectl config use-context default
 
     - name: Deploy using Helm
-      run: helm upgrade --install music_bot-$(git rev-parse --short HEAD) ./deploy
+      run: ls && helm upgrade --install music_bot-$(git rev-parse --short HEAD) ./deploy
 
 
