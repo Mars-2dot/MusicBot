@@ -33,20 +33,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up kubectl
-        uses: azure/kubernetes-set-context@v2
+      - uses: tale/kubectl-action@v1
         with:
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
-
-      - name: Configure kubectl
-        run: |
-          kubectl config use-context ${{ secrets.CLUSTER_NAME }}  
-          
+          base64-kube-config: ${{ secrets.KUBE_CONFIG }}
+      - run: kubectl get pods
+      
       - name: Deploy using Helm
         run: | 
-          cat kube-config.yaml 
-          kubectl config view
-          kubectl cluster-info
-          kubectl get nodes
           helm upgrade --install music-bot ./deploy
       
