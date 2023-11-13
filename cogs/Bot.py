@@ -68,7 +68,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         embed = discord.Embed(title="",
                               description=f"Queued [{data['title']}]({data['webpage_url']}) [{ctx.author.mention}]",
                               color=discord.Color.green())
-                              
+
         await ctx.send(embed=embed)
 
         if download:
@@ -223,7 +223,7 @@ class Music(commands.Cog):
 
         return player
 
-    @bot.command(name='join', aliases=['connect', 'j'], description="connects to voice")
+    @bot.command(name='join', aliases=['connect', 'j', 'jtest'], description="connects to voice")
     async def connect_(self, ctx, *, channel: discord.VoiceChannel = None):
         try:
             channel = ctx.author.voice.channel
