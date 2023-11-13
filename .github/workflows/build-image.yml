@@ -33,28 +33,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install kubectl
-        run: |
-          curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kubectl"
-          chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/kubectl
-
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
+        uses: azure/kubernetes-set-context@v2
         with:
-          installKubectl: false
-
-      - name: Decode kube-config
-        run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kube-config.yaml
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
       - name: Configure kubectl
         run: |
-          kubectl config set-context default --cluster=${{ secrets.CLUSTER_NAME }} --user=default --kubeconfig=kube-config.yaml
-          kubectl config use-context default --kubeconfig=kube-config.yaml
-      - name: Print kubectl config
-        run: cat kube-config.yaml
-      - name: Check Helm version
-        run: helm version
+          kubectl config use-context ${{ secrets.CLUSTER_NAME }}  
+          
       - name: Deploy using Helm
         run: | 
           cat kube-config.yaml 
