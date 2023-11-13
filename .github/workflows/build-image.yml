@@ -31,10 +31,10 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v1
+        uses: azure/setup-kubectl@v3
         with:
           installKubectl: true
           kubectlVersion: 'latest'
@@ -44,6 +44,7 @@ jobs:
 
       - name: Configure kubectl
         run: |
+          kubectl config set-context default --cluster=${{ secrets.CLUSTER_NAME }} --user=default
           kubectl config use-context default --kubeconfig=kube-config.yaml
 
       - name: Deploy using Helm
