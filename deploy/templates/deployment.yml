@@ -13,6 +13,7 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      serviceAccountName: cd-service-account
       containers:
       - name: {{ .Release.Name }}
         image: {{ .Values.container.image }}
