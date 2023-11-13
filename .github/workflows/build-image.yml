@@ -33,11 +33,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Install kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
+
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          installKubectl: true
-          kubectlVersion: 'latest'
+          installKubectl: false
 
       - name: Decode kube-config
         run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kube-config.yaml
@@ -54,5 +59,6 @@ jobs:
         run: | 
           cat kube-config.yaml 
           kubectl config view
+          kubectl cluster-info
           helm upgrade --install music-bot ./deploy
       
