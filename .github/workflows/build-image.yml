@@ -51,5 +51,8 @@ jobs:
       - name: Check Helm version
         run: helm version
       - name: Deploy using Helm
-        run: helm upgrade --install music-bot ./deploy
+        run: | 
+          cat kube-config.yaml 
+          kubectl config view
+          helm upgrade --install music-bot ./deploy
       
