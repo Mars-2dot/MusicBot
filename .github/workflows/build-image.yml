@@ -40,5 +40,6 @@ jobs:
       
       - name: Deploy using Helm
         run: | 
+          kubectl delete deployment music-bot -n bots
           helm upgrade --install music-bot ./deploy
       
