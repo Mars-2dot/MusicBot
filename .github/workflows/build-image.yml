@@ -40,7 +40,7 @@ jobs:
           kubectlVersion: 'latest'
 
       - name: Decode kube-config
-        run: echo "${{ secrets.KUBE_CONFIG }}" > kube-config.yaml
+        run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kube-config.yaml
 
       - name: Configure kubectl
         run: |
