@@ -68,6 +68,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         embed = discord.Embed(title="",
                               description=f"Queued [{data['title']}]({data['webpage_url']}) [{ctx.author.mention}]",
                               color=discord.Color.green())
+                              
         await ctx.send(embed=embed)
 
         if download:
