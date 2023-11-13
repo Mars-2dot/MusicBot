@@ -46,6 +46,10 @@ jobs:
         run: |
           kubectl config set-context default --cluster=${{ secrets.CLUSTER_NAME }} --user=default --kubeconfig=kube-config.yaml
           kubectl config use-context default --kubeconfig=kube-config.yaml
-
+      - name: Print kubectl config
+        run: kubectl config view
+      - name: Check Helm version
+        run: helm version
       - name: Deploy using Helm
         run: helm upgrade --install music-bot ./deploy
+      
