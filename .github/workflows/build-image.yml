@@ -47,7 +47,7 @@ jobs:
           kubectl config set-context default --cluster=${{ secrets.CLUSTER_NAME }} --user=default --kubeconfig=kube-config.yaml
           kubectl config use-context default --kubeconfig=kube-config.yaml
       - name: Print kubectl config
-        run: kubectl config view
+        run: cat kube-config.yaml
       - name: Check Helm version
         run: helm version
       - name: Deploy using Helm
