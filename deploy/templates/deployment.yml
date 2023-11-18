@@ -4,6 +4,8 @@ metadata:
   name: {{ .Release.Name }}
   namespace: bots
 spec:
+  strategy:
+    type: Recreate
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -13,9 +15,16 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 10
       containers:
       - name: {{ .Release.Name }}
         image: {{ .Values.container.image }}
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:

@@ -2,3 +2,5 @@ container:
   image: mars2dot/music_bot:latest
 replicaCount: 1
 deployName: music-bot
+version: "latest"
+namespace: bots
