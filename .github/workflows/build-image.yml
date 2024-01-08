@@ -45,5 +45,5 @@ jobs:
           ./get_helm.sh
       - name: Deploy using Helm
         run: | 
-          helm upgrade --install music-bot ./deploy
+          helm upgrade --install music-bot ./deploy --namespace bots
       
