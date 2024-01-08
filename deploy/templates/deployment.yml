@@ -5,7 +5,7 @@ metadata:
   namespace: bots
 spec:
   strategy:
-    type: Recreate
+    type: RollingUpdate
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -16,7 +16,7 @@ spec:
         app: {{ .Release.Name }}
     spec:
       spec:
-        terminationGracePeriodSeconds: 0
+      terminationGracePeriodSeconds: 0
       tolerations:
       - key: "node.kubernetes.io/unreachable"
         operator: "Exists"
