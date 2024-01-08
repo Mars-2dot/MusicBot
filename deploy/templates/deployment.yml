@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: bots
+spec:
+  strategy:
+    type: Recreate
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 10
+      containers:
+      - name: {{ .Release.Name }}
+        image: {{ .Values.container.image }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: MusicBotToken
+          valueFrom:
+            secretKeyRef:
+              name: music-bot-secret
+              key: MusicBotToken

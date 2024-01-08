@@ -1,12 +1,18 @@
+import discord
+from discord.ext import commands
+
+intents = discord.Intents.all()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
 settings = {
-    'token': 'OTA0NzY0Njc2MDE2MDcwNjU2.YYARxA.4PpNo0ZW3RRZFyXOu20k_jcEIc8',
     'bot': 'GreenTeaBot',
     'id': 904764676016070656,
     'prefix': '!'
 }
 
 settingsTest = {
-    'token': 'OTAzOTM5NDQxODQyODc2NDg4.GofE8l.4ZR5-NuB5fKIK72kmDrZHs40cbQL_Dsob_ZFdY',
     'bot': 'GreenTeaBot',
     'id': 903939441842876488,
     'prefix': '!'
@@ -26,7 +32,7 @@ ytdlopts = {
     # "extract_flat": True
     'username': 'botgeshka@mail.ru',
     'password': 'onyxlotus2664',
-    'cookiefile': 'settings/youtube.com_cookies.txt'
+    'cookiefile': 'settings/cookies.txt'
 }
 
 ffmpegopts = {
