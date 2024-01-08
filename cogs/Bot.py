@@ -171,7 +171,11 @@ class MusicPlayer:
             self.np = await self._channel.send(embed=embed)
             await self.next.wait()
 
-            source.cleanup()
+            try:
+                source.cleanup()
+            except ValueError as e:
+                print(f"Ошибка при очистке файла: {e}")
+
             self.current = None
 
     def destroy(self, guild):
