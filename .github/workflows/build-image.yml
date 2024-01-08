@@ -37,7 +37,12 @@ jobs:
         with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
       - run: kubectl get pods
-      
+
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
       - name: Deploy using Helm
         run: | 
           helm upgrade --install music-bot ./deploy
