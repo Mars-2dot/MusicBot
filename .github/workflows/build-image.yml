@@ -47,6 +47,7 @@ jobs:
         run: |
           if helm ls -n bots | grep -q 'music-bot'; then
             echo "Release exists, upgrading..."
+            helm delete music-bot -n bots
             kubectl get pods -n bots | grep 'music-bot' | awk '{print $1}' | xargs -I {} kubectl delete pod {} -n bots --force --grace-period=0
             helm install music-bot ./deploy --namespace bots
           else
