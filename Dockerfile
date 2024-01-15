@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y ffmpeg
 
 RUN python3 -m pip install -U discord.py
-RUN python3 -m pip install -U yt-dlp pynacl environs
+RUN python3 -m pip install -U yt-dlp pynacl environs pyOpenSSL ndg-httpsclient  pyasn1
 COPY ./cogs/* /home/bot/cogs/
 COPY ./exception/* /home/bot/exception/
 COPY ./exception/errors/* /home/bot/exception/errors/
