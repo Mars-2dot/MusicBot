@@ -16,7 +16,7 @@ spec:
         app: {{ .Release.Name }}
     spec:
       spec:
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 0
       tolerations:
       - key: "node.kubernetes.io/unreachable"
         operator: "Exists"
