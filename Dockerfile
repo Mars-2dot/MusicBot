@@ -6,7 +6,7 @@ LABEL version="0.9.0"
 
 RUN apt-get update && \
   apt-get install -y python3 python3-pip && \
-    apt-get install -y ffmpeg
+    apt-get install -y ffmpeg iputils-ping
 
 RUN python3 -m pip install -U discord.py
 RUN python3 -m pip install -U yt-dlp pynacl environs pyOpenSSL ndg-httpsclient  pyasn1 flask
