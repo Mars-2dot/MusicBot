@@ -23,4 +23,4 @@ def check_services():
 
 
 def run_server():
-    app.run(port=5001, debug=False, use_reloader=False)
+    app.run(port=5001, debug=False, use_reloader=False, host='0.0.0.0')
