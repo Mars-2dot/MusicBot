@@ -7,13 +7,15 @@ import platform
 
 app = Flask(__name__)
 
+
 def ping_host(host):
     param = '-n' if platform.system().lower() == 'windows' else '-c'
-    command = f"ping {param} 1 {host}"
+    command = ["ping", param, "1", host]
 
     try:
-        response = subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return response.returncode == 0
+        with subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) as process:
+            process.wait()
+            return process.returncode == 0
     except Exception as e:
         print(f"An error occurred: {e}")
         return False
