@@ -15,7 +15,6 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
-      spec:
       terminationGracePeriodSeconds: 0
       tolerations:
       - key: "node.kubernetes.io/unreachable"
@@ -34,3 +33,15 @@ spec:
             secretKeyRef:
               name: music-bot-secret
               key: MusicBotToken
+        readinessProbe:
+          httpGet:
+            path: /check-services
+            port: 5001
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /check-services
+            port: 5001
+          initialDelaySeconds: 15
+          periodSeconds: 20
