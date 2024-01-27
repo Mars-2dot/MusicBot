@@ -16,12 +16,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Maven
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-          maven-version: '3.8.7'
+      - name: Get short SHA
+        id: short-sha
+        run: echo "::set-output name=sha::$(echo $GITHUB_SHA | cut -c 1-7)"
+
+      - name: Install Maven
+        run: |
+          sudo apt-get update
+          sudo apt-get install maven
 
       - name: Build artifact
         run: mvn clean install -DskipTests
@@ -30,10 +32,10 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t mars2dot/music_bot:${{ github.sha }} .
+        run: docker build -t mars2dot/music_bot:${{ steps.short-sha.outputs.sha }} .
 
       - name: Push Docker image
-        run: docker push mars2dot/music_bot:${{ github.sha }}
+        run: docker push mars2dot/music_bot:${{ steps.short-sha.outputs.sha }}
 
   deploy:
     runs-on: self-hosted
