@@ -16,6 +16,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
       - name: Get short SHA
         id: short-sha
         run: echo "::set-output name=sha::$(echo $GITHUB_SHA | cut -c 1-7)"
