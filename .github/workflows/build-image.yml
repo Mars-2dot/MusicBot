@@ -66,4 +66,4 @@ jobs:
           helm upgrade music-bot ./k8s/MusicBot \
             --namespace bots \
             --set image.repository=mars2dot/music_bot \
-            --set image.tag=${{ github.sha }}
+            --set image.tag=${{ steps.short-sha.outputs.sha }}
