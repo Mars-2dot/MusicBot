@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    outputs:
+      short_sha: ${{ steps.short-sha.outputs.sha }}
 
     steps:
       - name: Checkout repository
@@ -24,7 +26,7 @@ jobs:
 
       - name: Get short SHA
         id: short-sha
-        run: echo "::set-output name=sha::$(echo $GITHUB_SHA | cut -c 1-7)"
+        run: echo "::set-output name=sha::$(git rev-parse --short HEAD)"
 
       - name: Install Maven
         run: |
@@ -66,4 +68,4 @@ jobs:
           helm upgrade music-bot ./k8s/MusicBot \
             --namespace bots \
             --set image.repository=mars2dot/music_bot \
-            --set image.tag=${{ steps.short-sha.outputs.sha }}
+            --set image.tag=${{ needs.build.outputs.short_sha }}
