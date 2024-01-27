@@ -14,7 +14,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Set up Maven
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+          maven-version: '3.8.7'
+
+      - name: Build artifact
+        run: mvn clean install -DskipTests
 
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -54,4 +64,3 @@ jobs:
             echo "Release does not exist, installing..."
             helm install music-bot ./deploy --namespace bots
           fi
-      

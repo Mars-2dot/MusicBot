@@ -1,22 +1,11 @@
-FROM ubuntu:latest
+FROM openjdk:19-alpine
 
-MAINTAINER Mars-2dot
+WORKDIR /app
 
-LABEL version="0.9.0"
+COPY ./target/MusicBot-Snapshot.jar /app/musicbot.jar
+COPY ./src/main/resources/reference.conf /app/config.txt
 
-RUN apt-get update && \
-  apt-get install -y python3 python3-pip && \
-    apt-get install -y ffmpeg iputils-ping
 
-RUN python3 -m pip install -U discord.py
-RUN python3 -m pip install -U yt-dlp pynacl environs pyOpenSSL ndg-httpsclient  pyasn1 flask
-COPY ./cogs/* /home/bot/cogs/
-COPY ./exception/* /home/bot/exception/
-COPY ./exception/errors/* /home/bot/exception/errors/
-COPY ./logic/* /home/bot/logic/
-COPY ./settings/* /home/bot/settings/
-COPY ./main.py /home/bot/
+EXPOSE 8080
 
-WORKDIR /home/bot
-
-ENTRYPOINT ["/usr/bin/python3", "main.py", "prod"]
+CMD ["java", "-jar", "musicbot.jar"]
