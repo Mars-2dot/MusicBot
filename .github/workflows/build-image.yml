@@ -40,10 +40,10 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t mars2dot/music_bot:${{ steps.short-sha.outputs.sha }} .
+        run: docker build -t ${{ secrets.HARBOR_URL }}/bots/music_bot:${{ steps.short-sha.outputs.sha }} .
 
       - name: Push Docker image
-        run: docker push mars2dot/music_bot:${{ steps.short-sha.outputs.sha }}
+        run: docker push ${{ secrets.HARBOR_URL }}/bots/music_bot:${{ steps.short-sha.outputs.sha }}
 
   deploy:
     runs-on: self-hosted
@@ -67,5 +67,5 @@ jobs:
         run: |
           helm upgrade music-bot ./k8s/MusicBot \
             --namespace bots \
-            --set image.repository=mars2dot/music_bot \
+            --set image.repository=${{ secrets.HARBOR_URL }}/bots/music_bot \
             --set image.tag=${{ needs.build.outputs.short_sha }}
