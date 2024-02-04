@@ -42,7 +42,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
 
-
       - name: Build artifact
         run: mvn clean install -DskipTests
 
