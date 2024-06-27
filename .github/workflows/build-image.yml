@@ -55,7 +55,7 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/music_bot:${{ steps.short-sha.outputs.sha }}
 
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: build
 
     steps:
