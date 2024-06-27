@@ -54,23 +54,23 @@ public class JMusicBot
                                 Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE};
     public final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES};
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args)
-    {
-        if(args.length > 0)
-            switch(args[0].toLowerCase())
-            {
-                case "generate-config":
-                    BotConfig.writeDefaultConfig();
-                    return;
-                default:
-            }
-        startBot();
-    }
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main(String[] args)
+//    {
+//        if(args.length > 0)
+//            switch(args[0].toLowerCase())
+//            {
+//                case "generate-config":
+//                    BotConfig.writeDefaultConfig();
+//                    return;
+//                default:
+//            }
+//        startBot();
+//    }
     
-    private static void startBot()
+    public static void startBot()
     {
         // create prompt to handle startup
         Prompt prompt = new Prompt("JMusicBot");
