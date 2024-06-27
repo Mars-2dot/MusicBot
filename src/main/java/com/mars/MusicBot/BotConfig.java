@@ -15,14 +15,13 @@
  */
 package com.mars.MusicBot;
 
-import com.mars.MusicBot.utils.FormatUtil;
-import com.mars.MusicBot.utils.OtherUtil;
 import com.mars.MusicBot.entities.Prompt;
+import com.mars.MusicBot.utils.OtherUtil;
+import com.mars.MusicBot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,7 +46,7 @@ public class BotConfig {
     private final static String CONTEXT = "Config";
     private final static String START_TOKEN = "/// START OF JMUSICBOT CONFIG ///";
     private final static String END_TOKEN = "/// END OF JMUSICBOT CONFIG ///";
-
+    
     private Path path = null;
 
     @Value("${MusicBotToken:token}")
@@ -59,44 +58,38 @@ public class BotConfig {
     @Value("${owner:0}")
     private long owner;
 
-    private String altprefix;
-    private String helpWord;
-    private String playlistsFolder;
-    private String successEmoji;
-    private String warningEmoji;
-    private String errorEmoji;
-    private String loadingEmoji;
-    private String searchingEmoji;
-    private boolean stayInChannel;
-    private boolean songInGame;
-    private boolean npImages;
-    private boolean updatealerts;
-    private boolean useEval;
-    private boolean dbots;
-    private long maxSeconds;
-    private long aloneTimeUntilStop;
+    private String altprefix, helpWord, playlistsFolder, logLevel,
+            successEmoji, warningEmoji, errorEmoji, loadingEmoji, searchingEmoji,
+            evalEngine;
+    private boolean stayInChannel, songInGame, npImages, updatealerts, useEval, dbots;
+    private long maxSeconds, aloneTimeUntilStop;
+    private int maxYTPlaylistPages;
+    private double skipratio;
     private OnlineStatus status;
     private Activity game;
     private Config aliases, transforms;
 
     private boolean valid = false;
-
-    public BotConfig(Prompt prompt) {
+    
+    public BotConfig(Prompt prompt)
+    {
         this.prompt = prompt;
     }
-
-    public void load() {
+    
+    public void load()
+    {
         valid = false;
-
+        
         // read config from file
-        try {
+        try 
+        {
             // get the path to the config, default config.txt
             path = getConfigPath();
-
+            
             // load in the config file, plus the default values
             //Config config = ConfigFactory.parseFile(path.toFile()).withFallback(ConfigFactory.load());
             Config config = ConfigFactory.load();
-
+            
             // set values
             altprefix = config.getString("altprefix");
             helpWord = config.getString("help");
@@ -111,228 +104,271 @@ public class BotConfig {
             songInGame = config.getBoolean("songinstatus");
             npImages = config.getBoolean("npimages");
             updatealerts = config.getBoolean("updatealerts");
+            logLevel = config.getString("loglevel");
             useEval = config.getBoolean("eval");
+            evalEngine = config.getString("evalengine");
             maxSeconds = config.getLong("maxtime");
+            maxYTPlaylistPages = config.getInt("maxytplaylistpages");
             aloneTimeUntilStop = config.getLong("alonetimeuntilstop");
             playlistsFolder = config.getString("playlistsfolder");
             aliases = config.getConfig("aliases");
             transforms = config.getConfig("transforms");
+            skipratio = config.getDouble("skipratio");
             dbots = owner == 000000000000000000L;
-
+            
             // we may need to write a new config file
             boolean write = false;
 
             // validate bot token
-            if (token == null || token.isEmpty() || token.equalsIgnoreCase("BOT_TOKEN_HERE")) {
-                token = prompt.prompt("Please provide a bot token."
-                        + "\nBot Token: ");
-                if (token == null) {
+            if(token==null || token.isEmpty() || token.equalsIgnoreCase("BOT_TOKEN_HERE"))
+            {
+                token = prompt.prompt("Please provide a bot token.");
+                if(token==null)
+                {
                     prompt.alert(Prompt.Level.WARNING, CONTEXT, "No token provided! Exiting.\n\nConfig Location: " + path.toAbsolutePath().toString());
                     return;
-                } else {
+                }
+                else
+                {
                     write = true;
                 }
             }
-
+            
             // validate bot owner
-            if (owner <= 0) {
-                try {
+            if(owner<=0)
+            {
+                try
+                {
                     owner = Long.parseLong(prompt.prompt("Owner ID was missing, or the provided owner ID is not valid."
-                            + "\nPlease provide the User ID of the bot's owner."
-                            + "\nOwner User ID: "));
-                } catch (NumberFormatException | NullPointerException ex) {
+                        + "\nPlease provide the User ID of the bot's owner."
+                        + "\nOwner User ID: "));
+                }
+                catch(NumberFormatException | NullPointerException ex)
+                {
                     owner = 0;
                 }
-                if (owner <= 0) {
+                if(owner<=0)
+                {
                     prompt.alert(Prompt.Level.ERROR, CONTEXT, "Invalid User ID! Exiting.\n\nConfig Location: " + path.toAbsolutePath().toString());
                     return;
-                } else {
+                }
+                else
+                {
                     write = true;
                 }
             }
-
-            if (write)
+            
+            if(write)
                 writeToFile();
-
+            
             // if we get through the whole config, it's good to go
             valid = true;
-        } catch (ConfigException ex) {
+        }
+        catch (ConfigException ex)
+        {
             prompt.alert(Prompt.Level.ERROR, CONTEXT, ex + ": " + ex.getMessage() + "\n\nConfig Location: " + path.toAbsolutePath().toString());
         }
     }
-
-    private void writeToFile() {
+    
+    private void writeToFile()
+    {
         byte[] bytes = loadDefaultConfig().replace("BOT_TOKEN_HERE", token)
                 .replace("0 // OWNER ID", Long.toString(owner))
                 .trim().getBytes();
-        try {
+        try 
+        {
             Files.write(path, bytes);
-        } catch (IOException ex) {
-            prompt.alert(Prompt.Level.WARNING, CONTEXT, "Failed to write new config options to config.txt: " + ex
-                    + "\nPlease make sure that the files are not on your desktop or some other restricted area.\n\nConfig Location: "
-                    + path.toAbsolutePath().toString());
+        }
+        catch(IOException ex) 
+        {
+            prompt.alert(Prompt.Level.WARNING, CONTEXT, "Failed to write new config options to config.txt: "+ex
+                + "\nPlease make sure that the files are not on your desktop or some other restricted area.\n\nConfig Location: " 
+                + path.toAbsolutePath().toString());
         }
     }
-
-    private static String loadDefaultConfig() {
+    
+    private static String loadDefaultConfig()
+    {
         String original = OtherUtil.loadResource(new JMusicBot(), "/reference.conf");
-        return original == null
-                ? "token = BOT_TOKEN_HERE\r\nowner = 0 // OWNER ID"
-                : original.substring(original.indexOf(START_TOKEN) + START_TOKEN.length(), original.indexOf(END_TOKEN)).trim();
+        return original==null 
+                ? "token = BOT_TOKEN_HERE\r\nowner = 0 // OWNER ID" 
+                : original.substring(original.indexOf(START_TOKEN)+START_TOKEN.length(), original.indexOf(END_TOKEN)).trim();
     }
-
-    private static Path getConfigPath() {
+    
+    private static Path getConfigPath()
+    {
         Path path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.txt")));
-        if (path.toFile().exists()) {
-            if (System.getProperty("config.file") == null)
+        if(path.toFile().exists())
+        {
+            if(System.getProperty("config.file") == null)
                 System.setProperty("config.file", System.getProperty("config", path.toAbsolutePath().toString()));
             ConfigFactory.invalidateCaches();
         }
         return path;
     }
-
-    public static void writeDefaultConfig() {
+    
+    public static void writeDefaultConfig()
+    {
         Prompt prompt = new Prompt(null, null, true, true);
         prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Generating default config file");
         Path path = BotConfig.getConfigPath();
         byte[] bytes = BotConfig.loadDefaultConfig().getBytes();
-        try {
+        try
+        {
             prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Writing default config file to " + path.toAbsolutePath().toString());
             Files.write(path, bytes);
-        } catch (Exception ex) {
+        }
+        catch(Exception ex)
+        {
             prompt.alert(Prompt.Level.ERROR, "JMusicBot Config", "An error occurred writing the default config file: " + ex.getMessage());
         }
     }
-
-
+    
     public boolean isValid()
     {
         return valid;
     }
-
+    
     public String getConfigLocation()
     {
         return path.toFile().getAbsolutePath();
     }
-
+    
     public String getPrefix()
     {
         return prefix;
     }
-
+    
     public String getAltPrefix()
     {
         return "NONE".equalsIgnoreCase(altprefix) ? null : altprefix;
     }
-
+    
     public String getToken()
     {
         return token;
     }
-
-    public void setToken(String nToken) {
-        token = nToken;
+    
+    public double getSkipRatio()
+    {
+        return skipratio;
     }
-
-    public void setPrefix(String nPrefix) {
-        prefix = nPrefix;
-    }
-
+    
     public long getOwnerId()
     {
         return owner;
     }
-
+    
     public String getSuccess()
     {
         return successEmoji;
     }
-
+    
     public String getWarning()
     {
         return warningEmoji;
     }
-
+    
     public String getError()
     {
         return errorEmoji;
     }
-
+    
     public String getLoading()
     {
         return loadingEmoji;
     }
-
+    
     public String getSearching()
     {
         return searchingEmoji;
     }
-
+    
     public Activity getGame()
     {
         return game;
     }
-
+    
+    public boolean isGameNone()
+    {
+        return game != null && game.getName().equalsIgnoreCase("none");
+    }
+    
     public OnlineStatus getStatus()
     {
         return status;
     }
-
+    
     public String getHelp()
     {
         return helpWord;
     }
-
+    
     public boolean getStay()
     {
         return stayInChannel;
     }
-
+    
     public boolean getSongInStatus()
     {
         return songInGame;
     }
-
+    
     public String getPlaylistsFolder()
     {
         return playlistsFolder;
     }
-
+    
     public boolean getDBots()
     {
         return dbots;
     }
-
+    
     public boolean useUpdateAlerts()
     {
         return updatealerts;
+    }
+
+    public String getLogLevel()
+    {
+        return logLevel;
     }
 
     public boolean useEval()
     {
         return useEval;
     }
-
+    
+    public String getEvalEngine()
+    {
+        return evalEngine;
+    }
+    
     public boolean useNPImages()
     {
         return npImages;
     }
-
+    
     public long getMaxSeconds()
     {
         return maxSeconds;
     }
-
+    
+    public int getMaxYTPlaylistPages()
+    {
+        return maxYTPlaylistPages;
+    }
+    
     public String getMaxTime()
     {
-        return FormatUtil.formatTime(maxSeconds * 1000);
+        return TimeUtil.formatTime(maxSeconds * 1000);
     }
 
     public long getAloneTimeUntilStop()
     {
         return aloneTimeUntilStop;
     }
-
+    
     public boolean isTooLong(AudioTrack track)
     {
         if(maxSeconds<=0)
@@ -351,10 +387,9 @@ public class BotConfig {
             return new String[0];
         }
     }
-
+    
     public Config getTransforms()
     {
         return transforms;
     }
-
 }

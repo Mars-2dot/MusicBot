@@ -23,11 +23,9 @@ import com.mars.MusicBot.audio.PlayerManager;
 import com.mars.MusicBot.gui.GUI;
 import com.mars.MusicBot.playlist.PlaylistLoader;
 import com.mars.MusicBot.settings.SettingsManager;
-import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -36,19 +34,14 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class Bot
 {
-    @Getter
     private final EventWaiter waiter;
-    @Getter
     private final ScheduledExecutorService threadpool;
-    @Getter
     private final BotConfig config;
     private final SettingsManager settings;
     private final PlayerManager players;
     private final PlaylistLoader playlists;
     private final NowplayingHandler nowplaying;
-    @Getter
     private final AloneInVoiceHandler aloneInVoiceHandler;
-
     
     private boolean shuttingDown = false;
     private JDA jda;
@@ -68,12 +61,27 @@ public class Bot
         this.aloneInVoiceHandler = new AloneInVoiceHandler(this);
         this.aloneInVoiceHandler.init();
     }
-
+    
+    public BotConfig getConfig()
+    {
+        return config;
+    }
+    
     public SettingsManager getSettingsManager()
     {
         return settings;
     }
-
+    
+    public EventWaiter getWaiter()
+    {
+        return waiter;
+    }
+    
+    public ScheduledExecutorService getThreadpool()
+    {
+        return threadpool;
+    }
+    
     public PlayerManager getPlayerManager()
     {
         return players;
@@ -89,6 +97,11 @@ public class Bot
         return nowplaying;
     }
 
+    public AloneInVoiceHandler getAloneInVoiceHandler()
+    {
+        return aloneInVoiceHandler;
+    }
+    
     public JDA getJDA()
     {
         return jda;
@@ -124,7 +137,6 @@ public class Bot
                 {
                     ah.stopAndClear();
                     ah.getPlayer().destroy();
-                    nowplaying.updateTopic(g.getIdLong(), ah, true);
                 }
             });
             jda.shutdown();

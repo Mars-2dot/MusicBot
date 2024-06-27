@@ -17,8 +17,11 @@ package com.mars.MusicBot.utils;
 
 import com.mars.MusicBot.JMusicBot;
 import com.mars.MusicBot.entities.Prompt;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.ApplicationInfo;
+import net.dv8tion.jda.api.entities.User;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -61,7 +64,7 @@ public class OtherUtil
             {
                 result = Paths.get(new File(JMusicBot.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath() + File.separator + path);
             }
-            catch(URISyntaxException ex) {}
+            catch(URISyntaxException ignored) {}
         }
         return result;
     }
@@ -81,7 +84,7 @@ public class OtherUtil
             reader.lines().forEach(line -> sb.append("\r\n").append(line));
             return sb.toString().trim();
         }
-        catch(IOException ex)
+        catch(IOException ignored)
         {
             return null;
         }
@@ -207,5 +210,22 @@ public class OtherUtil
         {
             return null;
         }
+    }
+
+    /**
+     * Checks if the bot JMusicBot is being run on is supported & returns the reason if it is not.
+     * @return A string with the reason, or null if it is supported.
+     */
+    public static String getUnsupportedBotReason(JDA jda) 
+    {
+        if (jda.getSelfUser().getFlags().contains(User.UserFlag.VERIFIED_BOT))
+            return "The bot is verified. Using JMusicBot in a verified bot is not supported.";
+
+        ApplicationInfo info = jda.retrieveApplicationInfo().complete();
+        if (info.isBotPublic())
+            return "\"Public Bot\" is enabled. Using JMusicBot as a public bot is not supported. Please disable it in the "
+                    + "Developer Dashboard at https://discord.com/developers/applications/" + jda.getSelfUser().getId() + "/bot.";
+
+        return null;
     }
 }

@@ -20,6 +20,7 @@ import com.mars.MusicBot.Bot;
 import com.mars.MusicBot.audio.AudioHandler;
 import com.mars.MusicBot.audio.RequestMetadata;
 import com.mars.MusicBot.commands.MusicCommand;
+import com.mars.MusicBot.utils.FormatUtil;
 
 public class SkipCmd extends MusicCommand
 {
@@ -38,7 +39,11 @@ public class SkipCmd extends MusicCommand
     {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         RequestMetadata rm = handler.getRequestMetadata();
-        if(event.getAuthor().getIdLong() == rm.getOwner())
+        double skipRatio = bot.getSettingsManager().getSettings(event.getGuild()).getSkipRatio();
+        if(skipRatio == -1) {
+          skipRatio = bot.getConfig().getSkipRatio();
+        }
+        if(event.getAuthor().getIdLong() == rm.getOwner() || skipRatio == 0)
         {
             event.reply(event.getClient().getSuccess()+" Skipped **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**");
             handler.getPlayer().stopTrack();
@@ -57,12 +62,12 @@ public class SkipCmd extends MusicCommand
             }
             int skippers = (int)event.getSelfMember().getVoiceState().getChannel().getMembers().stream()
                     .filter(m -> handler.getVotes().contains(m.getUser().getId())).count();
-            int required = (int)Math.ceil(listeners * bot.getSettingsManager().getSettings(event.getGuild()).getSkipRatio());
+            int required = (int)Math.ceil(listeners * skipRatio);
             msg += skippers + " votes, " + required + "/" + listeners + " needed]`";
             if(skippers>=required)
             {
                 msg += "\n" + event.getClient().getSuccess() + " Skipped **" + handler.getPlayer().getPlayingTrack().getInfo().title
-                    + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + rm.user.username + "**)");
+                    + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + FormatUtil.formatUsername(rm.user) + "**)");
                 handler.getPlayer().stopTrack();
             }
             event.reply(msg);

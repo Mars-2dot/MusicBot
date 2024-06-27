@@ -21,9 +21,11 @@ import com.mars.MusicBot.Bot;
 import com.mars.MusicBot.audio.AudioHandler;
 import com.mars.MusicBot.audio.QueuedTrack;
 import com.mars.MusicBot.commands.MusicCommand;
+import com.mars.MusicBot.settings.QueueType;
 import com.mars.MusicBot.settings.RepeatMode;
 import com.mars.MusicBot.settings.Settings;
 import com.mars.MusicBot.utils.FormatUtil;
+import com.mars.MusicBot.utils.TimeUtil;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
@@ -91,7 +93,7 @@ public class QueueCmd extends MusicCommand
         }
         Settings settings = event.getClient().getSettingsFor(event.getGuild());
         long fintotal = total;
-        builder.setText((i1,i2) -> getQueueTitle(ah, event.getClient().getSuccess(), songs.length, fintotal, settings.getRepeatMode()))
+        builder.setText((i1,i2) -> getQueueTitle(ah, event.getClient().getSuccess(), songs.length, fintotal, settings.getRepeatMode(), settings.getQueueType()))
                 .setItems(songs)
                 .setUsers(event.getAuthor())
                 .setColor(event.getSelfMember().getColor())
@@ -99,7 +101,7 @@ public class QueueCmd extends MusicCommand
         builder.build().paginate(event.getChannel(), pagenum);
     }
     
-    private String getQueueTitle(AudioHandler ah, String success, int songslength, long total, RepeatMode repeatmode)
+    private String getQueueTitle(AudioHandler ah, String success, int songslength, long total, RepeatMode repeatmode, QueueType queueType)
     {
         StringBuilder sb = new StringBuilder();
         if(ah.getPlayer().getPlayingTrack()!=null)
@@ -108,7 +110,8 @@ public class QueueCmd extends MusicCommand
                     .append(ah.getPlayer().getPlayingTrack().getInfo().title).append("**\n");
         }
         return FormatUtil.filter(sb.append(success).append(" Current Queue | ").append(songslength)
-                .append(" entries | `").append(FormatUtil.formatTime(total)).append("` ")
-                .append(repeatmode.getEmoji() != null ? "| "+repeatmode.getEmoji() : "").toString());
+                .append(" entries | `").append(TimeUtil.formatTime(total)).append("` ")
+                .append("| ").append(queueType.getEmoji()).append(" `").append(queueType.getUserFriendlyName()).append('`')
+                .append(repeatmode.getEmoji() != null ? " | "+repeatmode.getEmoji() : "").toString());
     }
 }

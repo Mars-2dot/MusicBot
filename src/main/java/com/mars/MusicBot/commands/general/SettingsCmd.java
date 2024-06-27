@@ -18,6 +18,7 @@ package com.mars.MusicBot.commands.general;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.mars.MusicBot.Bot;
+import com.mars.MusicBot.settings.QueueType;
 import com.mars.MusicBot.settings.RepeatMode;
 import com.mars.MusicBot.settings.Settings;
 import com.mars.MusicBot.utils.FormatUtil;
@@ -59,6 +60,9 @@ public class SettingsCmd extends Command
                         + "\nRepeat Mode: " + (s.getRepeatMode() == RepeatMode.OFF
                                                 ? s.getRepeatMode().getUserFriendlyName()
                                                 : "**"+s.getRepeatMode().getUserFriendlyName()+"**")
+                        + "\nQueue Type: " + (s.getQueueType() == QueueType.FAIR
+                                                ? s.getQueueType().getUserFriendlyName()
+                                                : "**"+s.getQueueType().getUserFriendlyName()+"**")
                         + "\nDefault Playlist: " + (s.getDefaultPlaylist() == null ? "None" : "**" + s.getDefaultPlaylist() + "**")
                         )
                 .setFooter(event.getJDA().getGuilds().size() + " servers | "

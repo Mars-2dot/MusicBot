@@ -29,8 +29,8 @@ import java.util.Scanner;
 @NoArgsConstructor
 public class Prompt
 {
-    private static String title = "";
-    private static String noguiMessage = "";
+    private static String title;
+    private static String noguiMessage;
     
     private boolean nogui;
     private boolean noprompt;

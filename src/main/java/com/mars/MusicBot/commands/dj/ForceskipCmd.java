@@ -20,6 +20,7 @@ import com.mars.MusicBot.Bot;
 import com.mars.MusicBot.audio.AudioHandler;
 import com.mars.MusicBot.audio.RequestMetadata;
 import com.mars.MusicBot.commands.DJCommand;
+import com.mars.MusicBot.utils.FormatUtil;
 
 public class ForceskipCmd extends DJCommand 
 {
@@ -38,7 +39,7 @@ public class ForceskipCmd extends DJCommand
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         RequestMetadata rm = handler.getRequestMetadata();
         event.reply(event.getClient().getSuccess()+" Skipped **"+handler.getPlayer().getPlayingTrack().getInfo().title
-                +"** "+(rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + rm.user.username + "**)"));
+                +"** "+(rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + FormatUtil.formatUsername(rm.user) + "**)"));
         handler.getPlayer().stopTrack();
     }
 }

@@ -6,7 +6,7 @@ import com.mars.MusicBot.Bot;
 import com.mars.MusicBot.audio.AudioHandler;
 import com.mars.MusicBot.audio.QueuedTrack;
 import com.mars.MusicBot.commands.DJCommand;
-import com.mars.MusicBot.queue.FairQueue;
+import com.mars.MusicBot.queue.AbstractQueue;
 
 public class MoveTrackCmd extends DJCommand
 {
@@ -54,7 +54,7 @@ public class MoveTrackCmd extends DJCommand
 
         // Validate that from and to are available
         AudioHandler handler = (AudioHandler) event.getGuild().getAudioManager().getSendingHandler();
-        FairQueue<QueuedTrack> queue = handler.getQueue();
+        AbstractQueue<QueuedTrack> queue = handler.getQueue();
         if (isUnavailablePosition(queue, from))
         {
             String reply = String.format("`%d` is not a valid position in the queue!", from);
@@ -75,7 +75,7 @@ public class MoveTrackCmd extends DJCommand
         event.replySuccess(reply);
     }
 
-    private static boolean isUnavailablePosition(FairQueue<QueuedTrack> queue, int position)
+    private static boolean isUnavailablePosition(AbstractQueue<QueuedTrack> queue, int position)
     {
         return (position < 1 || position > queue.size());
     }
