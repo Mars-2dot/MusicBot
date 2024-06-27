@@ -76,5 +76,5 @@ jobs:
         run: |
           helm upgrade music-bot ./k8s/MusicBot \
             --namespace bots \
-            --set image.repository=${{ secrets.HARBOR_URL }}/bots/music_bot \
+            --set image.repository=${{ secrets.DOCKER_USERNAME }}/music_bot \
             --set image.tag=${{ needs.build.outputs.short_sha }}
