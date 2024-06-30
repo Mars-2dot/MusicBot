@@ -32,7 +32,7 @@ public class Prompt
     private static String title;
     private static String noguiMessage;
     
-    private boolean nogui;
+    private boolean nogui = true;
     private boolean noprompt;
     private Scanner scanner;
     

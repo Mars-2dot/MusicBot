@@ -30,6 +30,7 @@ import com.mars.MusicBot.entities.Prompt;
 import com.mars.MusicBot.gui.GUI;
 import com.mars.MusicBot.settings.SettingsManager;
 import com.mars.MusicBot.utils.OtherUtil;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -40,12 +41,14 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.util.Arrays;
 
-
+@Component
+@RequiredArgsConstructor
 public class JMusicBot 
 {
     public final static Logger LOG = LoggerFactory.getLogger(JMusicBot.class);
@@ -53,7 +56,7 @@ public class JMusicBot
                                 Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EXT_EMOJI,
                                 Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE};
     public final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES};
-    
+    private final BotConfig botConfig;
 //    /**
 //     * @param args the command line arguments
 //     */
@@ -70,7 +73,7 @@ public class JMusicBot
 //        startBot();
 //    }
     
-    public static void startBot()
+    public void startBot()
     {
         // create prompt to handle startup
         Prompt prompt = new Prompt("JMusicBot");
@@ -80,7 +83,7 @@ public class JMusicBot
         OtherUtil.checkJavaVersion(prompt);
         
         // load config
-        BotConfig config = new BotConfig(prompt);
+        BotConfig config = botConfig;
         config.load();
         if(!config.isValid())
             return;

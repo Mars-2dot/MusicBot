@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,6 +71,17 @@ public class BotConfig {
     private Config aliases, transforms;
 
     private boolean valid = false;
+
+    @PostConstruct
+    public void loadEnv() {
+        this.token = System.getenv("MusicBotToken");
+        this.prefix = System.getenv("prefix");
+        this.owner = Long.parseLong(System.getenv("owner"));
+
+        if (prefix == null || prefix.isEmpty()) {
+            this.prefix = "!";
+        }
+    }
     
     public BotConfig(Prompt prompt)
     {
@@ -114,7 +126,7 @@ public class BotConfig {
             aliases = config.getConfig("aliases");
             transforms = config.getConfig("transforms");
             skipratio = config.getDouble("skipratio");
-            dbots = owner == 000000000000000000L;
+            dbots = true;
             
             // we may need to write a new config file
             boolean write = false;
@@ -166,7 +178,7 @@ public class BotConfig {
         }
         catch (ConfigException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, CONTEXT, ex + ": " + ex.getMessage() + "\n\nConfig Location: " + path.toAbsolutePath().toString());
+             prompt.alert(Prompt.Level.ERROR, CONTEXT, ex + ": " + ex.getMessage() + "\n\nConfig Location: " + path.toAbsolutePath().toString());
         }
     }
     
@@ -187,9 +199,9 @@ public class BotConfig {
         }
     }
     
-    private static String loadDefaultConfig()
+    private String loadDefaultConfig()
     {
-        String original = OtherUtil.loadResource(new JMusicBot(), "/reference.conf");
+        String original = OtherUtil.loadResource(new JMusicBot(this), "/reference.conf");
         return original==null 
                 ? "token = BOT_TOKEN_HERE\r\nowner = 0 // OWNER ID" 
                 : original.substring(original.indexOf(START_TOKEN)+START_TOKEN.length(), original.indexOf(END_TOKEN)).trim();
@@ -207,12 +219,12 @@ public class BotConfig {
         return path;
     }
     
-    public static void writeDefaultConfig()
+    public  void writeDefaultConfig()
     {
         Prompt prompt = new Prompt(null, null, true, true);
         prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Generating default config file");
         Path path = BotConfig.getConfigPath();
-        byte[] bytes = BotConfig.loadDefaultConfig().getBytes();
+        byte[] bytes = this.loadDefaultConfig().getBytes();
         try
         {
             prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Writing default config file to " + path.toAbsolutePath().toString());
