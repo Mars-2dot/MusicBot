@@ -99,13 +99,3 @@ tolerations: []
 secret:
   useExistingSecret: true
   name: "music-bot-secret"
-
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: region
-              operator: NotIn
-              values:
-                - "ru"
