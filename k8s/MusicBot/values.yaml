@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: harbor.mars-shelter.com/bots/music_bot
-  pullPolicy: IfNotPresent
+  repository: mars2dot/music_bot
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "ec515fd"
+  tag: "latest"
 
 imagePullSecrets:
   - name: registry-secret
@@ -99,12 +99,3 @@ tolerations: []
 secret:
   useExistingSecret: true
   name: "music-bot-secret"
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: NotIn
-              values:
-                - "k8s-worker1"
