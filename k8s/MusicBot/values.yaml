@@ -44,6 +44,16 @@ service:
   type: ClusterIP
   port: 80
 
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: hostname
+            operator: In
+            values:
+            - k8s-worker
 ingress:
   enabled: false
   className: ""
