@@ -3,6 +3,7 @@ package com.mars.MusicBot.commands.music;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.mars.MusicBot.Bot;
 import com.mars.MusicBot.audio.AudioHandler;
+import com.mars.MusicBot.audio.RequestMetadata;
 import com.mars.MusicBot.commands.DJCommand;
 import com.mars.MusicBot.commands.MusicCommand;
 import com.mars.MusicBot.utils.TimeUtil;
@@ -33,7 +34,7 @@ public class SeekCmd extends MusicCommand
         }
 
 
-        if (!DJCommand.checkDJPermission(event) && playingTrack.getUserData(Long.class) != event.getAuthor().getIdLong())
+        if (!DJCommand.checkDJPermission(event) && playingTrack.getUserData(RequestMetadata.class).getOwner() != event.getAuthor().getIdLong())
         {
             event.replyError("You cannot seek **" + playingTrack.getInfo().title + "** because you didn't add it!");
             return;
