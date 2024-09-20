@@ -28,23 +28,6 @@ jobs:
         id: short-sha
         run: echo "::set-output name=sha::$(git rev-parse --short HEAD)"
 
-      - name: Install Maven
-        run: |
-          sudo apt-get update
-          sudo apt-get install maven -y
-
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2
-
-      - name: Build artifact
-        run: mvn clean install -U -DskipTests
-
       - name: Login to Harbor
         run: docker login ${{ secrets.HARBOR_URL }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
