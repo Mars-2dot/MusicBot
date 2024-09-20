@@ -43,7 +43,7 @@ jobs:
             ${{ runner.os }}-m2
 
       - name: Build artifact
-        run: mvn clean install -DskipTests
+        run: mvn clean install -U -DskipTests
 
       - name: Login to Harbor
         run: docker login ${{ secrets.HARBOR_URL }} -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
